@@ -10,5 +10,9 @@ class EntropySampling(Strategy):
 		idxs_unlabeled = np.arange(self.n_pool)[~self.idxs_lb]
 		probs = self.predict_prob(self.X[idxs_unlabeled], self.Y.numpy()[idxs_unlabeled])
 		log_probs = torch.log(probs)
+        
+        log_probs[log_probs == float("-inf")] = 0
+        log_probs[log_probs == float("inf")] = 0
+        
 		U = (probs*log_probs).sum(1)
 		return idxs_unlabeled[U.sort()[1][:n]]
